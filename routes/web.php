@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,7 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', 'welcome');
+Route::get('/', function () {
+    return view('welcome');
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -23,7 +26,8 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/avatar', [ProfileController::class, 'update'])->name('profile.avatar');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
