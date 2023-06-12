@@ -1,7 +1,10 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Profile\AvatarController;
 
@@ -32,3 +35,22 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+// github
+Route::post('/auth/redirect', function () {
+    return Socialite::driver('github')->redirect();
+})->name('login.github');
+
+Route::get('/auth/callback', function () {
+    $user = Socialite::driver('github')->user();
+    $user = User::firstOrCreate(['email' => $user->email], [
+        'name' => $user->name,
+        'password' => 'password',
+    ]);
+    Auth::login($user);
+    return redirect('/dashboard');
+});
+// github
+
+Route::middleware('auth')->group(function () {
+    Route::resource('product', ProductController::class);
+});
